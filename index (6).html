@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>StudyFlow – Smart Student Planner</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Noto+Sans+Arabic:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--ink:#0f1b3d;--mut:#5d6a8a;--line:#e1e6f2;--blue:#2f6bff;--violet:#7a4dff;--teal:#14b8a6;--red:#e5484d;--amber:#f59e0b;--sh:0 1px 2px rgba(15,27,61,.06),0 4px 14px rgba(15,27,61,.05);
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1230;--card:#111c40;--ink:#e8ecfa;--mut:#9aa7cc;--line:#223059;--sh:none;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0a1230;--card:#111c40;--ink:#e8ecfa;--mut:#9aa7cc;--line:#223059;--sh:none;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Plus Jakarta Sans","Noto Sans Arabic",system-ui,sans-serif}
+[dir=rtl] body{font-family:"Noto Sans Arabic","Plus Jakarta Sans",system-ui,sans-serif}
+.app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+nav{background:var(--card);border-inline-end:1px solid var(--line);padding:20px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:4px}
+.logo{font-weight:800;font-size:20px;padding:4px 10px 18px;display:flex;gap:8px;align-items:center}
+.logo i{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--blue),var(--violet));display:inline-block}
+nav button{all:unset;cursor:pointer;padding:10px 12px;border-radius:10px;color:var(--mut);font-weight:600;display:flex;gap:10px;align-items:center}
+nav button:hover{background:var(--bg)}
+nav button.on{background:linear-gradient(135deg,var(--blue),var(--violet));color:#fff}
+nav button:focus-visible,.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+main{padding:24px clamp(16px,3vw,36px);max-width:1100px;width:100%}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+h1{font-size:26px;margin:0;font-weight:800}h2{font-size:16px;margin:0 0 12px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:10px;font:inherit;font-weight:600;cursor:pointer}
+.btn.p{background:linear-gradient(135deg,var(--blue),var(--violet));color:#fff;border:0}
+.btn.d{color:var(--red)}.btn.s{padding:4px 9px;font-size:13px}
+.grid{display:grid;gap:16px}.g5{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}.g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--sh)}
+.stat b{display:block;font-size:28px;line-height:1.1}.stat span{color:var(--mut);font-size:13px}
+.item{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.item:first-child{border-top:0}.item .g{flex:1;min-width:0}.item .t{font-weight:600;overflow-wrap:anywhere}
+.done .t{text-decoration:line-through;color:var(--mut)}
+.m{color:var(--mut);font-size:13px}
+.chip{display:inline-block;padding:1px 9px;border-radius:99px;font-size:12px;font-weight:600;background:var(--bg);border:1px solid var(--line)}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-inline-end:6px}
+.pr-urgent{color:var(--red)}.pr-high{color:var(--amber)}.pr-medium{color:var(--blue)}.pr-low{color:var(--teal)}
+.od{color:var(--red);font-weight:600}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px;width:100%}
+.bars{display:flex;gap:10px;align-items:flex-end;height:140px}
+.bars div{flex:1;text-align:center;font-size:12px;color:var(--mut);display:flex;flex-direction:column;justify-content:flex-end;height:100%}
+.bars i{display:block;background:linear-gradient(var(--violet),var(--blue));border-radius:6px 6px 0 0;min-height:2px}
+.pb{height:8px;background:var(--bg);border-radius:9px;overflow:hidden}.pb i{display:block;height:100%;border-radius:9px}
+.empty{color:var(--mut);padding:18px 0;text-align:center}
+.timer{text-align:center}.time{font-size:72px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-2px}
+.tabs{display:inline-flex;gap:4px;background:var(--bg);padding:4px;border-radius:12px;margin-bottom:12px}
+.tabs button{all:unset;cursor:pointer;padding:6px 14px;border-radius:9px;font-weight:600;color:var(--mut)}.tabs .on{background:var(--card);color:var(--ink)}
+dialog{border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--ink);width:min(440px,92vw);padding:22px}
+dialog::backdrop{background:rgba(5,10,30,.55)}
+label{display:block;font-size:13px;font-weight:600;margin:10px 0 4px;color:var(--mut)}
+.toast{position:fixed;inset-inline:0;bottom:calc(76px + env(safe-area-inset-bottom,0px));margin:auto;width:max-content;max-width:90vw;background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:10px;font-weight:600}
+@media (max-width:800px){
+.app{grid-template-columns:1fr}
+nav{position:fixed;inset:auto 0 0 0;height:auto;flex-direction:row;justify-content:space-around;z-index:5;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));border-inline-end:0;border-top:1px solid var(--line)}
+nav .logo{display:none}nav button{flex-direction:column;gap:0;font-size:11px;padding:6px 8px}
+main{padding-bottom:90px}.time{font-size:56px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app"><nav id="nav" aria-label="Main"></nav><main id="main"></main></div>
+<dialog id="dlg"></dialog>
+<div id="toast" class="toast" hidden role="status"></div>
+<script>
+"use strict";
+const K="studyflow.v1",$=s=>document.querySelector(s);
+const DEF={tasks:[],subjects:[],exams:[],focus:[],set:{lang:"en",theme:"auto",focus:25,short:5,long:15}};
+let S;try{S=JSON.parse(localStorage.getItem(K))}catch(e){}
+S=Object.assign({},DEF,S||{});S.set=Object.assign({},DEF.set,S.set);
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+const uid=()=>Math.random().toString(36).slice(2,10);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ymd=d=>{d=d||new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const addDays=(n)=>{const d=new Date();d.setDate(d.getDate()+n);return d};
+const diffDays=s=>Math.round((new Date(s+"T00:00")-new Date(ymd()+"T00:00"))/864e5);
+const L={en:{dash:"Dashboard",tasks:"Tasks",subjects:"Subjects",exams:"Exams",focus:"Focus",hi:"Welcome back",today:"Due today",overdue:"Overdue",soon:"Coming up (7 days)",week:"Focus minutes this week",bySub:"Progress by subject",comp:"Completed",streak:"Day streak",wk:"Focus this week",min:"min",addTask:"Add task",addSub:"Add subject",addExam:"Add exam",title:"Title",subject:"Subject",due:"Due date",prio:"Priority",status:"Status",type:"Type",est:"Estimated minutes",notes:"Notes",save:"Save",cancel:"Cancel",del:"Delete",edit:"Edit",dup:"Duplicate",search:"Search tasks",all:"All",low:"Low",medium:"Medium",high:"High",urgent:"Urgent",todo:"Not started",doing:"In progress",done:"Completed",name:"Name",color:"Color",teacher:"Instructor",date:"Exam date",diff:"Difficulty (1–5)",left:"days left",dueToday:"today",ago:"days overdue",start:"Start",pause:"Pause",resume:"Resume",reset:"Reset",fm:"Focus",sb:"Short break",lb:"Long break",hist:"Recent sessions",none:"No subject",noTasks:"No tasks yet. Add your first one.",noSub:"No subjects yet. Add one to group your tasks.",noEx:"No exams yet. Add one to start a countdown.",noHist:"No focus sessions yet. Start the timer.",nothing:"Nothing here.",sure:"Delete this item? This cannot be undone.",homework:"Homework",assignment:"Assignment",project:"Project",revision:"Revision",personal:"Personal",sort:"Sort by",sDue:"Deadline",sPrio:"Priority",sSub:"Subject",sStat:"Status",dur:"Durations (minutes)",saved:"Saved",deleted:"Deleted",focusDone:"Focus session recorded",breakDone:"Break finished",tsk:"tasks",req:"Title is required",theme:"Theme"},
+ar:{dash:"لوحة التحكم",tasks:"المهام",subjects:"المواد",exams:"الاختبارات",focus:"التركيز",hi:"أهلاً بعودتك",today:"مستحقة اليوم",overdue:"متأخرة",soon:"قريباً (٧ أيام)",week:"دقائق التركيز هذا الأسبوع",bySub:"التقدم حسب المادة",comp:"مكتملة",streak:"أيام متتالية",wk:"تركيز هذا الأسبوع",min:"د",addTask:"إضافة مهمة",addSub:"إضافة مادة",addExam:"إضافة اختبار",title:"العنوان",subject:"المادة",due:"تاريخ التسليم",prio:"الأولوية",status:"الحالة",type:"النوع",est:"المدة المقدرة (دقائق)",notes:"ملاحظات",save:"حفظ",cancel:"إلغاء",del:"حذف",edit:"تعديل",dup:"نسخ",search:"ابحث في المهام",all:"الكل",low:"منخفضة",medium:"متوسطة",high:"عالية",urgent:"عاجلة",todo:"لم تبدأ",doing:"قيد التنفيذ",done:"مكتملة",name:"الاسم",color:"اللون",teacher:"المدرّس",date:"تاريخ الاختبار",diff:"الصعوبة (١–٥)",left:"يوم متبقٍ",dueToday:"اليوم",ago:"يوم تأخير",start:"ابدأ",pause:"إيقاف مؤقت",resume:"استئناف",reset:"إعادة ضبط",fm:"تركيز",sb:"استراحة قصيرة",lb:"استراحة طويلة",hist:"آخر الجلسات",none:"بدون مادة",noTasks:"لا توجد مهام بعد. أضف مهمتك الأولى.",noSub:"لا توجد مواد بعد. أضف مادة لتنظيم مهامك.",noEx:"لا توجد اختبارات بعد. أضف اختباراً لبدء العد التنازلي.",noHist:"لا توجد جلسات بعد. ابدأ المؤقت.",nothing:"لا شيء هنا.",sure:"حذف هذا العنصر؟ لا يمكن التراجع.",homework:"واجب",assignment:"تكليف",project:"مشروع",revision:"مراجعة",personal:"شخصي",sort:"ترتيب حسب",sDue:"الموعد",sPrio:"الأولوية",sSub:"المادة",sStat:"الحالة",dur:"المدد (دقائق)",saved:"تم الحفظ",deleted:"تم الحذف",focusDone:"تم تسجيل جلسة التركيز",breakDone:"انتهت الاستراحة",tsk:"مهام",req:"العنوان مطلوب",theme:"المظهر"}};
+const t=k=>(L[S.set.lang]||L.en)[k]||k;
+const PR=["low","medium","high","urgent"],ST=["todo","doing","done"],TY=["homework","assignment","project","revision","personal"];
+const ui={view:"dash",q:"",st:"",pr:"",sort:"due"};
+const subj=id=>S.subjects.find(s=>s.id===id);
+const chip=id=>{const s=subj(id);return s?`<span class="chip"><i class="dot" style="background:${esc(s.color)}"></i>${esc(s.name)}</span>`:""};
+function toast(m){const e=$("#toast");e.textContent=m;e.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>e.hidden=true,2200)}
+function applyPrefs(){const r=document.documentElement,l=S.set.lang;r.lang=l;r.dir=l==="ar"?"rtl":"ltr";
+ if(S.set.theme==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",S.set.theme)}
+/* ---------- stats ---------- */
+const focusOn=d=>S.focus.filter(f=>f.date===d).reduce((a,f)=>a+f.minutes,0);
+function streak(){const days=new Set([...S.focus.map(f=>f.date),...S.tasks.filter(x=>x.doneAt).map(x=>x.doneAt)]);
+ let n=0,i=days.has(ymd())?0:1;while(days.has(ymd(addDays(-i)))){n++;i++}return n}
+const weekData=()=>[...Array(7)].map((_,i)=>{const d=addDays(i-6);return{d,m:focusOn(ymd(d))}});
+/* ---------- views ---------- */
+function taskRow(x){const dd=x.due?diffDays(x.due):null,od=x.status!=="done"&&dd!==null&&dd<0;
+ return `<div class="item ${x.status==="done"?"done":""}"><input type="checkbox" style="width:auto" aria-label="${t("done")}" data-act="tog" data-id="${x.id}" ${x.status==="done"?"checked":""}>
+ <div class="g"><div class="t">${esc(x.title)}</div><div class="m">${chip(x.subject)} <span class="pr-${x.prio}">● ${t(x.prio)}</span> · ${t(x.type)} · ${t(x.status)}
+ ${x.due?` · <span class="${od?"od":""}">${esc(x.due)}${od?` (${-dd} ${t("ago")})`:""}</span>`:""}</div></div>
+ <div class="row"><button class="btn s" data-act="edit" data-k="task" data-id="${x.id}">${t("edit")}</button><button class="btn s" data-act="dup" data-id="${x.id}">${t("dup")}</button><button class="btn s d" data-act="del" data-k="task" data-id="${x.id}">${t("del")}</button></div></div>`}
+function vDash(){
+ const open=S.tasks.filter(x=>x.status!=="done"),td=ymd();
+ const od=open.filter(x=>x.due&&x.due<td),today=open.filter(x=>x.due===td);
+ const soon=open.filter(x=>x.due&&x.due>td&&diffDays(x.due)<=7).sort((a,b)=>a.due.localeCompare(b.due));
+ const ex=S.exams.filter(e=>diffDays(e.date)>=0&&diffDays(e.date)<=7);
+ const pct=S.tasks.length?Math.round(S.tasks.filter(x=>x.status==="done").length/S.tasks.length*100):0;
+ const wd=weekData(),wt=wd.reduce((a,b)=>a+b.m,0),mx=Math.max(1,...wd.map(x=>x.m));
+ const list=a=>a.length?a.map(taskRow).join(""):`<div class="empty">${t("nothing")}</div>`;
+ return `<div class="top"><h1>${t("hi")}</h1><button class="btn p" data-act="add" data-k="task">+ ${t("addTask")}</button></div>
+ <div class="grid g5"><div class="card stat"><b>${today.length}</b><span>${t("today")}</span></div><div class="card stat"><b class="${od.length?"od":""}">${od.length}</b><span>${t("overdue")}</span></div>
+ <div class="card stat"><b>${pct}%</b><span>${t("comp")}</span></div><div class="card stat"><b>${streak()}</b><span>${t("streak")}</span></div><div class="card stat"><b>${wt}</b><span>${t("wk")} (${t("min")})</span></div></div>
+ <div class="grid g2" style="margin-top:16px"><div class="card"><h2>${t("overdue")} / ${t("today")}</h2>${list([...od,...today])}</div>
+ <div class="card"><h2>${t("soon")}</h2>${list(soon)}${ex.map(e=>`<div class="item"><div class="g"><div class="t">📝 ${esc(e.title)}</div><div class="m">${chip(e.subject)} ${esc(e.date)}</div></div></div>`).join("")}</div>
+ <div class="card"><h2>${t("week")}</h2>${wt?`<div class="bars">${wd.map(x=>`<div><span>${x.m||""}</span><i style="height:${Math.round(x.m/mx*100)}px"></i>${x.d.toLocaleDateString(S.set.lang,{weekday:"short"})}</div>`).join("")}</div>`:`<div class="empty">${t("noHist")}</div>`}</div>
+ <div class="card"><h2>${t("bySub")}</h2>${S.subjects.length?S.subjects.map(s=>{const a=S.tasks.filter(x=>x.subject===s.id),d=a.filter(x=>x.status==="done").length,p=a.length?Math.round(d/a.length*100):0;
+ return `<div style="margin:10px 0"><div class="row" style="justify-content:space-between"><span>${chip(s.id)}</span><span class="m">${d}/${a.length}</span></div><div class="pb"><i style="width:${p}%;background:${esc(s.color)}"></i></div></div>`}).join(""):`<div class="empty">${t("noSub")}</div>`}</div></div>`}
+function filtered(){const q=ui.q.toLowerCase(),po={urgent:0,high:1,medium:2,low:3},so={doing:0,todo:1,done:2};
+ return S.tasks.filter(x=>(!q||x.title.toLowerCase().includes(q)||(x.notes||"").toLowerCase().includes(q))&&(!ui.st||x.status===ui.st)&&(!ui.pr||x.prio===ui.pr))
+ .sort((a,b)=>ui.sort==="prio"?po[a.prio]-po[b.prio]:ui.sort==="sub"?(subj(a.subject)?.name||"~").localeCompare(subj(b.subject)?.name||"~"):ui.sort==="stat"?so[a.status]-so[b.status]:(a.due||"9999").localeCompare(b.due||"9999"))}
+const taskList=()=>{const a=filtered();return a.length?a.map(taskRow).join(""):`<div class="empty">${S.tasks.length?t("nothing"):t("noTasks")}</div>`};
+const opts=(arr,sel,all)=>(all?`<option value="">${t("all")}</option>`:"")+arr.map(v=>`<option value="${v}" ${v===sel?"selected":""}>${t(v)}</option>`).join("");
+function vTasks(){return `<div class="top"><h1>${t("tasks")}</h1><button class="btn p" data-act="add" data-k="task">+ ${t("addTask")}</button></div>
+ <div class="card"><div class="row" style="margin-bottom:8px"><input id="q" placeholder="${t("search")}" value="${esc(ui.q)}" style="flex:2;min-width:160px">
+ <select id="fs" style="flex:1;min-width:120px" aria-label="${t("status")}">${opts(ST,ui.st,1)}</select><select id="fp" style="flex:1;min-width:120px" aria-label="${t("prio")}">${opts(PR,ui.pr,1)}</select>
+ <select id="so" style="flex:1;min-width:120px" aria-label="${t("sort")}"><option value="due">${t("sDue")}</option><option value="prio" ${ui.sort==="prio"?"selected":""}>${t("sPrio")}</option><option value="sub" ${ui.sort==="sub"?"selected":""}>${t("sSub")}</option><option value="stat" ${ui.sort==="stat"?"selected":""}>${t("sStat")}</option></select></div>
+ <div id="list">${taskList()}</div></div>`}
+function vSubjects(){return `<div class="top"><h1>${t("subjects")}</h1><button class="btn p" data-act="add" data-k="subject">+ ${t("addSub")}</button></div>
+ <div class="grid g2">${S.subjects.length?S.subjects.map(s=>{const a=S.tasks.filter(x=>x.subject===s.id),d=a.filter(x=>x.status==="done").length,m=S.focus.filter(f=>f.subject===s.id).reduce((n,f)=>n+f.minutes,0);
+ return `<div class="card"><div class="row" style="justify-content:space-between"><h2><i class="dot" style="background:${esc(s.color)}"></i>${esc(s.name)}</h2><div class="row"><button class="btn s" data-act="edit" data-k="subject" data-id="${s.id}">${t("edit")}</button><button class="btn s d" data-act="del" data-k="subject" data-id="${s.id}">${t("del")}</button></div></div>
+ <div class="m">${esc(s.teacher||"")}</div><div class="pb" style="margin:12px 0"><i style="width:${a.length?Math.round(d/a.length*100):0}%;background:${esc(s.color)}"></i></div><div class="m">${d}/${a.length} ${t("tsk")} · ${m} ${t("min")}</div></div>`}).join(""):`<div class="card empty" style="grid-column:1/-1">${t("noSub")}</div>`}</div>`}
+function vExams(){const a=[...S.exams].sort((x,y)=>x.date.localeCompare(y.date));
+ return `<div class="top"><h1>${t("exams")}</h1><button class="btn p" data-act="add" data-k="exam">+ ${t("addExam")}</button></div><div class="card">${a.length?a.map(e=>{const d=diffDays(e.date);
+ return `<div class="item"><div class="g"><div class="t">${esc(e.title)}</div><div class="m">${chip(e.subject)} ${esc(e.date)} · ${t("diff")}: ${e.diff}</div></div>
+ <b class="${d<0?"m":d<=3?"od":""}">${d<0?"—":d===0?t("dueToday"):d+" "+t("left")}</b><button class="btn s" data-act="edit" data-k="exam" data-id="${e.id}">${t("edit")}</button><button class="btn s d" data-act="del" data-k="exam" data-id="${e.id}">${t("del")}</button></div>`}).join(""):`<div class="empty">${t("noEx")}</div>`}</div>`}
+/* ---------- focus timer ---------- */
+const T={mode:"focus",left:S.set.focus*60,end:0,run:false,count:0,subject:""};
+const dur=m=>S.set[m==="focus"?"focus":m]*60;
+const fmt=s=>String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
+function setMode(m){T.mode=m;T.left=dur(m);T.run=false;T.end=0}
+function tick(){if(!T.run)return;T.left=Math.max(0,Math.round((T.end-Date.now())/1000));paintTimer();
+ if(T.left<=0){if(T.mode==="focus"){S.focus.push({id:uid(),date:ymd(),minutes:S.set.focus,subject:T.subject,at:Date.now()});T.count++;save();toast(t("focusDone"));
+  setMode(T.count%4===0?"long":"short")}else{toast(t("breakDone"));setMode("focus")}
+  T.run=true;T.end=Date.now()+T.left*1000;if(ui.view==="focus")render()}}
+setInterval(tick,250);
+function paintTimer(){const e=$("#time");if(e){e.textContent=fmt(T.left);const b=$("#go");if(b)b.textContent=T.run?t("pause"):(T.left<dur(T.mode)?t("resume"):t("start"))}document.title=T.run?fmt(T.left)+" · StudyFlow":"StudyFlow"}
+function vFocus(){const h=[...S.focus].sort((a,b)=>b.at-a.at).slice(0,8);
+ return `<div class="top"><h1>${t("focus")}</h1></div><div class="grid g2"><div class="card timer"><div class="tabs">${["focus","short","long"].map(m=>`<button data-act="mode" data-m="${m}" class="${T.mode===m?"on":""}">${t(m==="focus"?"fm":m==="short"?"sb":"lb")}</button>`).join("")}</div>
+ <div class="time" id="time">${fmt(T.left)}</div><label for="fsub">${t("subject")}</label><select id="fsub"><option value="">${t("none")}</option>${S.subjects.map(s=>`<option value="${s.id}" ${s.id===T.subject?"selected":""}>${esc(s.name)}</option>`).join("")}</select>
+ <div class="row" style="justify-content:center;margin-top:16px"><button class="btn p" id="go" data-act="go">${T.run?t("pause"):T.left<dur(T.mode)?t("resume"):t("start")}</button><button class="btn" data-act="rst">${t("reset")}</button></div></div>
+ <div class="card"><h2>${t("dur")}</h2><div class="row">${[["focus","fm"],["short","sb"],["long","lb"]].map(([k,l])=>`<div style="flex:1"><label for="d${k}">${t(l)}</label><input id="d${k}" type="number" min="1" max="180" value="${S.set[k]}" data-dur="${k}"></div>`).join("")}</div>
+ <h2 style="margin-top:20px">${t("hist")}</h2>${h.length?h.map(f=>`<div class="item"><div class="g"><div class="t">${f.minutes} ${t("min")}</div><div class="m">${chip(f.subject)} ${esc(f.date)}</div></div></div>`).join(""):`<div class="empty">${t("noHist")}</div>`}</div></div>`}
+/* ---------- forms ---------- */
+const sel=(n,arr,v,lab)=>`<select name="${n}">${arr.map(a=>`<option value="${a}" ${a===v?"selected":""}>${lab?t(a):a}</option>`).join("")}</select>`;
+const subSel=v=>`<select name="subject"><option value="">${t("none")}</option>${S.subjects.map(s=>`<option value="${s.id}" ${s.id===v?"selected":""}>${esc(s.name)}</option>`).join("")}</select>`;
+function openForm(k,id){const col={task:"tasks",subject:"subjects",exam:"exams"}[k],x=id?S[col].find(i=>i.id===id):{},f=(l,h)=>`<label>${t(l)}</label>${h}`;
+ const body={task:()=>f("title",`<input name="title" required value="${esc(x.title)}">`)+f("subject",subSel(x.subject))+`<div class="row"><div style="flex:1">${f("due",`<input type="date" name="due" value="${esc(x.due||"")}">`)}</div><div style="flex:1">${f("est",`<input type="number" min="0" name="est" value="${x.est||""}">`)}</div></div>
+  <div class="row"><div style="flex:1">${f("prio",sel("prio",PR,x.prio||"medium",1))}</div><div style="flex:1">${f("status",sel("status",ST,x.status||"todo",1))}</div></div>`+f("type",sel("type",TY,x.type||"homework",1))+f("notes",`<textarea name="notes" rows="2">${esc(x.notes)}</textarea>`),
+ subject:()=>f("name",`<input name="name" required value="${esc(x.name)}">`)+f("teacher",`<input name="teacher" value="${esc(x.teacher)}">`)+f("color",`<input type="color" name="color" value="${x.color||"#2f6bff"}" style="height:40px;padding:3px">`),
+ exam:()=>f("title",`<input name="title" required value="${esc(x.title)}">`)+f("subject",subSel(x.subject))+f("date",`<input type="date" name="date" required value="${esc(x.date||"")}">`)+f("diff",`<input type="number" min="1" max="5" name="diff" value="${x.diff||3}">`)}[k]();
+ const d=$("#dlg");d.innerHTML=`<form id="frm"><h2>${t(id?"edit":k==="task"?"addTask":k==="subject"?"addSub":"addExam")}</h2>${body}<div class="row" style="justify-content:flex-end;margin-top:18px"><button type="button" class="btn" data-act="close">${t("cancel")}</button><button class="btn p">${t("save")}</button></div></form>`;
+ d.showModal();
+ $("#frm").onsubmit=e=>{e.preventDefault();const v=Object.fromEntries(new FormData(e.target));const main=v.title??v.name;if(!main.trim()){toast(t("req"));return}
+  if(k==="task"){v.est=+v.est||0;if(v.status==="done"&&!x.doneAt)v.doneAt=ymd();if(v.status!=="done")v.doneAt=null;else v.doneAt=x.doneAt||ymd()}
+  if(k==="exam")v.diff=Math.min(5,Math.max(1,+v.diff||3));
+  if(id)Object.assign(x,v);else S[col].push({id:uid(),...v});
+  save();d.close();toast(t("saved"));render()}}
+/* ---------- shell ---------- */
+const ICON={dash:"▦",tasks:"✓",subjects:"◍",exams:"✎",focus:"◔"};
+function render(){const n=$("#nav");
+ n.innerHTML=`<div class="logo"><i></i>StudyFlow</div>`+Object.keys(ICON).map(k=>`<button data-act="nav" data-v="${k}" class="${ui.view===k?"on":""}" ${ui.view===k?'aria-current="page"':""}><span aria-hidden="true">${ICON[k]}</span>${t(k)}</button>`).join("")+
+ `<div class="row" style="margin-top:auto;padding:8px 6px"><button class="btn s" data-act="lang" style="all:unset;cursor:pointer;font-weight:600;color:var(--mut)">${S.set.lang==="en"?"العربية":"English"}</button><button data-act="theme" aria-label="${t("theme")}" style="all:unset;cursor:pointer;font-weight:600;color:var(--mut)">◐ ${S.set.theme}</button></div>`;
+ $("#main").innerHTML={dash:vDash,tasks:vTasks,subjects:vSubjects,exams:vExams,focus:vFocus}[ui.view]();paintTimer()}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(!b)return;const a=b.dataset.act,id=b.dataset.id;
+ if(a==="nav"){ui.view=b.dataset.v;render()}
+ else if(a==="lang"){S.set.lang=S.set.lang==="en"?"ar":"en";save();applyPrefs();render()}
+ else if(a==="theme"){const o=["auto","light","dark"];S.set.theme=o[(o.indexOf(S.set.theme)+1)%3];save();applyPrefs();render()}
+ else if(a==="add")openForm(b.dataset.k);else if(a==="edit")openForm(b.dataset.k,id);
+ else if(a==="close")$("#dlg").close();
+ else if(a==="tog"){const x=S.tasks.find(i=>i.id===id);x.status=b.checked?"done":"todo";x.doneAt=b.checked?ymd():null;save();render()}
+ else if(a==="dup"){const x=S.tasks.find(i=>i.id===id);S.tasks.push({...x,id:uid(),status:"todo",doneAt:null});save();render()}
+ else if(a==="del"){if(!confirm(t("sure")))return;const col={task:"tasks",subject:"subjects",exam:"exams"}[b.dataset.k];S[col]=S[col].filter(i=>i.id!==id);
+  if(col==="subjects"){S.tasks.forEach(x=>{if(x.subject===id)x.subject=""});S.exams.forEach(x=>{if(x.subject===id)x.subject=""})}save();toast(t("deleted"));render()}
+ else if(a==="mode"){setMode(b.dataset.m);render()}
+ else if(a==="go"){if(T.run){T.run=false}else{T.run=true;T.end=Date.now()+T.left*1000}render()}
+ else if(a==="rst"){setMode(T.mode);render()}});
+document.addEventListener("input",e=>{const i=e.target;
+ if(i.id==="q"||i.id==="fs"||i.id==="fp"||i.id==="so"){ui.q=$("#q").value;ui.st=$("#fs").value;ui.pr=$("#fp").value;ui.sort=$("#so").value;$("#list").innerHTML=taskList()}
+ else if(i.id==="fsub")T.subject=i.value;
+ else if(i.dataset.dur){const v=Math.min(180,Math.max(1,+i.value||1));S.set[i.dataset.dur]=v;save();if(!T.run&&T.left===dur(T.mode)||i.dataset.dur===T.mode&&!T.run){T.left=dur(T.mode);paintTimer()}}});
+applyPrefs();render();
+</script>
+</body>
+</html>
